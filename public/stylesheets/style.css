@@ -14,7 +14,7 @@ p {
 }
 
 .person {
-    font-weight: bold;
+
 }
 
 .royalty {
@@ -31,17 +31,14 @@ p {
 
 .place {
     color: green;
-    font-weight: bold;
 }
 
 .date {
     color: orange;
-    font-weight: bold;
 }
 
 .martyrdom {
     color: red;
-    font-weight: bold;
 }
 
 .martyr {
