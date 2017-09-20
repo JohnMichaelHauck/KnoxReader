@@ -125,15 +125,16 @@ function convertBook(fileText) {
   encode(/§/, /King James the First/g, classes);
   encode(/§/, /King James the Second/g, classes);
   encode(/§/, /King James the Third/g, classes);
+  encode(/§/, /Harry the Eighth|King Harry/g, classes);
+  encode(/§/, /Christian King of Denmark|King of Denmark/g, classes);
+  encode(/§/, /King of England/g, classes);
+  encode(/§/, /Mary of Lorraine/g, classes);
   encode(/§/, /King James the Fourth/g, classes);
   encode(/§1·4·2:|§1·7·1:/, /King/g, classes, false);
   encode(/§/, /King James the Fifth|James the Fifth|James V/g, classes);
-  encode(/§1·(15·2|16·1|22·1|24·1:|28·1|29|30|36)\D/, /Prince|King/g, classes, false);
+  encode(/§1·(15·2|16·1|22·1|24·1:|28·1|29|30|36|37|38)\D/, /Prince|King/g, classes, false);
   encode(/§1·31\D/, /our King\b/gi, classes, false);
   encode(/§1·(32|33|34|35)\D/, /King/g, classes, false);
-  encode(/§/, /Harry the Eighth|King Harry/g, classes);
-  encode(/§/, /Christian King of Denmark/g, classes);
-  encode(/§/, /Mary of Lorraine/g, classes);
 
   classes = 'person martyr';
   encode(/§1·1·1:/, /not given/g, classes);
@@ -197,7 +198,7 @@ function convertBook(fileText) {
   encode(/§1·(5|7|14|15|19)\D/, /Archbishop of Glasgow|Archbishop of St. Andrews|Abbot of Dunfermline|Chancellor of Scotland|Archbishop|Beaton/g, classes, false);
   encode(/§1·25\D/, /Chancellor, Archbishop of Glasgow/g, classes); // Gawin Dunbar
   encode(/§/, /Cardinal David Beaton|David Beaton/g, classes);
-  encode(/§1·(25|26|31|36)\D/, /Cardinal|Beaton/g, classes, false);
+  encode(/§1·(25|26|31|36|37|38)\D/, /Cardinal|Beaton/g, classes, false);
   encode(/§/, /Friar Alexander Campbell/g, classes);
   encode(/§1·8·2:/, /Campbell/g, classes, false);
   encode(/§/, /Earl of Cassillis/g, classes);
@@ -211,12 +212,15 @@ function convertBook(fileText) {
   encode(/§/, /Master Andrew Oliphant/g, classes);
   encode(/§/, /Friar Maltman/g, classes);
   encode(/§/, /Bishop of Dunblane/g, classes); // George Crichton
-  encode(/§/, /Oliver Sinclair/g, classes);
+  encode(/§/, /Oliver Sinclair|Oliver/g, classes);
   encode(/§/, /George Steel/g, classes);
+  encode(/§1·38\D/, /Ross/g, classes);
+  encode(/§1·38\D/, /Laird of Craigie/g, classes);
 
   classes = 'person other';
   encode(/§/, /Richard Carmichael/g, classes);
-  encode(/§1·29\D/, /Sir James Hamilton|Sir James/g, classes);
+  encode(/§1·29\D/, /Sir James Hamilton|Sir James|Lord Hamilton/g, classes);
+  encode(/§1·38\D/, /Lord Hamilton/g, classes, false);
   encode(/§/, /Thomas Scott/g, classes);
   encode(/§/, /Master Thomas Marjoribanks/g, classes);
   encode(/§/, /Master Hew Rigg/g, classes);
@@ -229,7 +233,10 @@ function convertBook(fileText) {
   encode(/§/, /James Douglas/g, classes);
   encode(/§/, /Earl of Angus/g, classes);
   encode(/§/, /Sir George/g, classes);
-
+  encode(/§/, /Laird of Grange/g, classes);
+  encode(/§/, /Earl of Arran/g, classes);
+  encode(/§/, /Lord Maxwell/g, classes);
+  
   classes = 'place';
   encode(/§/, /Glasgow/g, classes);
   encode(/§/, /University of St. Andrews/g, classes);
@@ -270,6 +277,9 @@ function convertBook(fileText) {
   encode(/§/, /Stitchel/g, classes);
   encode(/§/, /Fala/g, classes);
   encode(/§/, /Palace of Holyroodhouse|Abbey of Holyroodhouse/g, classes);
+  encode(/§/, /Solway Moss/g, classes);
+  encode(/§/, /Lochmaben/g, classes);
+  encode(/§/, /Carlisle/g, classes);
   
   classes = 'date';
   encode(/§/, /1[45]\d\d/g, classes);
