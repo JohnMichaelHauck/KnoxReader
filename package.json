@@ -6,6 +6,13 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JohnMichaelHauck/KnoxReader.git"
+  },
+  "author": "John Michael Hauck",
+  "license": "ISC",
+  "homepage": "https://github.com/JohnMichaelHauck/KnoxReader",
   "dependencies": {
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
