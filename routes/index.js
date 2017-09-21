@@ -7,9 +7,7 @@ var paragraphs = "";
 /* GET home page. */
 router.get('/', function (req, res, next) {
   var fileName = __dirname.replace('routes','public') + "\\history_reformation.txt";
-  var exists = fs.existsSync( fileName );
-  res.send(fileName + ' ---  exists: ' + exists);
-  //fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
+  fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
 });
 
 var encodingArray = [];
