@@ -3,15 +3,10 @@ var router = express.Router();
 var fs = require('fs');
 var paragraphs = "";
 
-function convertBook2(test) {
-  test = test.replace(/Knox/g, "Test");
-  return test;
-}  
-
 /* GET home page. */
 router.get('/', function (req, res, next) {
   var fileName = __dirname.replace('routes','public') + "\\history_reformation.txt";
-  fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook2(fileText)) });
+  fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
 });
 
 var encodingArray = [];
@@ -45,6 +40,11 @@ function encode(paragraphSelector, search, classes, newEntry = true) {
 }
 
 function convertBook(fileText) {
+  fileText = fileText.replace(/Knox/g, "Test");
+  return fileText;
+}  
+
+function convertBook2(fileText) {
 
   // remove horizontal lines that serve no purpose
   fileText = fileText.replace(/history.\n +_+/, "");
