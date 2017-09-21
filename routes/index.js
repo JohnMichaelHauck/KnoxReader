@@ -4,7 +4,8 @@ var fs = require('fs');
 var paragraphs = "";
 
 function convertBook2(test) {
-    return test;
+  test = test.replace(/Knox/g, "Test");
+  return test;
 }  
 
 /* GET home page. */
