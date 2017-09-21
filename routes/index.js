@@ -1,13 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-
 var paragraphs = "";
+
+function convertBook2(test) {
+    return test;
+}  
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   var fileName = __dirname.replace('routes','public') + "\\history_reformation.txt";
-  fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
+  fs.readFile( fileName, 'utf8', function (err, fileText) { res.send(convertBook2(fileText)) });
 });
 
 var encodingArray = [];
