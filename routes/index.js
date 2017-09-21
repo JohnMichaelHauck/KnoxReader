@@ -52,19 +52,6 @@ function convertBook(fileText) {
   // remove whitespace in the front of each line
   fileText = fileText.replace(/^ +/gm, "");
 
-  return fileText;
-}  
-
-function convertBook2(fileText) {
-
-  // remove horizontal lines that serve no purpose
-  fileText = fileText.replace(/history.\n +_+/, "history.\n");
-  fileText = fileText.replace(/life.\n +_+/, "life.\n");
-  fileText = fileText.replace(/hear.\n +_+/, "hear.\n");
-
-  // remove whitespace in the front of each line
-  fileText = fileText.replace(/^ +/gm, "");
-
   // break the document into 4 books and 4 sets of notes
   var sections = fileText.split("__________________________________________________________________\n");
   var books = [sections[7], sections[9], sections[11], sections[13]];
