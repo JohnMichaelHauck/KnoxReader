@@ -41,23 +41,26 @@ function encode(paragraphSelector, search, classes, newEntry = true) {
 
 function convertBook(fileText) {
 
+  // replace crlf with lf
+  fileText = fileText.replace(/\r\n/g, "\n");
+
   // remove horizontal lines that serve no purpose
-  fileText = fileText.replace(/history.\n +_+/, "");
-  fileText = fileText.replace(/life.\n +_+/, "");
-  fileText = fileText.replace(/hear.\n +_+/, "");
+  fileText = fileText.replace(/history.\n +_+/, "history.\n");
+  fileText = fileText.replace(/life.\n +_+/, "life.\n");
+  fileText = fileText.replace(/hear.\n +_+/, "hear.\n");
 
   // remove whitespace in the front of each line
   fileText = fileText.replace(/^ +/gm, "");
-  
+
   return fileText;
 }  
 
 function convertBook2(fileText) {
 
   // remove horizontal lines that serve no purpose
-  fileText = fileText.replace(/history.\n +_+/, "");
-  fileText = fileText.replace(/life.\n +_+/, "");
-  fileText = fileText.replace(/hear.\n +_+/, "");
+  fileText = fileText.replace(/history.\n +_+/, "history.\n");
+  fileText = fileText.replace(/life.\n +_+/, "life.\n");
+  fileText = fileText.replace(/hear.\n +_+/, "hear.\n");
 
   // remove whitespace in the front of each line
   fileText = fileText.replace(/^ +/gm, "");
