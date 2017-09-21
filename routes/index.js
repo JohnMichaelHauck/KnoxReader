@@ -6,7 +6,7 @@ var paragraphs = "";
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  fs.readFile("public/history_reformation.txt", 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
+  fs.readFile("history_reformation.txt", 'utf8', function (err, fileText) { res.send(convertBook(fileText)) });
   //res.send("Howdy James".replace("James", "Fred"));
 });
 
