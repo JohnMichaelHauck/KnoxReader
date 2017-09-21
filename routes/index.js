@@ -40,7 +40,15 @@ function encode(paragraphSelector, search, classes, newEntry = true) {
 }
 
 function convertBook(fileText) {
-  fileText = fileText.replace(/Knox/g, "Test");
+
+  // remove horizontal lines that serve no purpose
+  fileText = fileText.replace(/history.\n +_+/, "");
+  fileText = fileText.replace(/life.\n +_+/, "");
+  fileText = fileText.replace(/hear.\n +_+/, "");
+
+  // remove whitespace in the front of each line
+  fileText = fileText.replace(/^ +/gm, "");
+  
   return fileText;
 }  
 
