@@ -404,4 +404,5 @@ function initMap() {
 function showPopup(idPopup) {
     var popup = document.getElementById(idPopup);
     popup.classList.toggle("show");
+    initMap();
 }

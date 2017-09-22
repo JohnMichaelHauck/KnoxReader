@@ -5,10 +5,9 @@ block content
   div.sticky
     div#map
   
-  script(async, defer, src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrmOv7c979sXJumeKkJ2U8VnYgT-iZWGk&callback=initMap")
-
   div#book !{rawBook}
   
   script.
     window.onload = onLoad
    
+  script(async, defer, src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrmOv7c979sXJumeKkJ2U8VnYgT-iZWGk&callback=initMap")
