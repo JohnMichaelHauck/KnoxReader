@@ -108,3 +108,20 @@ p {
     from {opacity: 0;}
     to {opacity:1 ;}
 }
+
+div.sticky {
+    position: fixed;
+    left: 20;
+    top: 10;
+    width: 400px;
+    height: 200px;
+    background-color: grey;
+}
+
+#map {
+    left: 4;
+    top: 4;
+    width: 400px;
+    height: 200px;
+    background-color: pink;
+}
