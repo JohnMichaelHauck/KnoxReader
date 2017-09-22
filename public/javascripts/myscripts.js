@@ -1,5 +1,7 @@
 function onLoad() {
-    document.getElementById('book').innerHTML = convertBook(document.getElementById('book').innerHTML);
+    document.getElementById('cookBook').innerHTML = convertBook(document.getElementById('rawBook').innerHTML);
+    document.getElementById('places').innerHTML = renderPlaces();
+    document.getElementById('rawBook').innerHTML = "";
 }
 
 var map;
@@ -237,25 +239,27 @@ function convertBook(fileText) {
     encode(/§/, /John Mackay/g, classes);
     encode(/§/, /Ryngzean Brown/g, classes);
 
-    encodePlace(/§/, /Market Cross of Edinburgh/g, 55.949652, -3.190105);
-    encodePlace(/§/, /Glasgow/g, 55.863340, -4.250313);
-    encodePlace(/§/, /University of St. Andrews/g, 56.3416934, -2.7949409, 17);
-    encodePlace(/§1·8·1:/, /old College/g, '', false);
-    encodePlace(/§/, /St. Andrews/g, 56.341004, -2.796876);
-    encodePlace(/§/, /Dunfermline/g, '');
-    encodePlace(/§/, /Arbroath/g, '');
-    encodePlace(/§/, /Kilwinning/g, '');
-    encodePlace(/§/, /University of Wittenberg/g, '');
-    encodePlace(/§/, /Flodden/g, '');
+    var zoomCity = 12;
+    var zoomNeighborhood = 17;
+    encodePlace(/§/, /Market Cross of Edinburgh/g, 55.949652, -3.190105, zoomNeighborhood);
+    encodePlace(/§/, /Glasgow/g, 55.863340, -4.250313, zoomCity);
+    encodePlace(/§/, /University of St. Andrews/g, 56.3416934, -2.7949409, zoomNeighborhood);
+    encodePlace(/§1·8·1:/, /old College/g, 0, 0, 0, false);
+    encodePlace(/§/, /St. Andrews/g, 56.341004, -2.796876, zoomCity);
+    encodePlace(/§/, /Dunfermline/g, 56.0659396, -3.4560338, zoomCity);
+    encodePlace(/§/, /Arbroath/g, 56.5633591, -2.6047438, zoomCity);
+    encodePlace(/§/, /Kilwinning/g, 55.6537483, -4.7215086, zoomCity);
+    encodePlace(/§/, /University of Wittenberg/g, 51.4861319, 11.9673428, zoomCity);
+    encodePlace(/§/, /Flodden/g, 55.6109939, -2.1352809, zoomCity);
     encodePlace(/§/, /St. Duthac in Ross/g, '');
     encodePlace(/§/, /St. Leonard's College/g, '');
-    encodePlace(/§/, /Dundee/g, '');
+    encodePlace(/§/, /Dundee/g, 56.4745215, -3.1069149, zoomCity);
     encodePlace(/§/, /Kyle-Stewart/g, '');
     encodePlace(/§/, /King's-Kyle/g, '');
     encodePlace(/§/, /Cunningham/g, '');
-    encodePlace(/§/, /Cessnock/g, '');
-    encodePlace(/§/, /Barskymming/g, '');
-    encodePlace(/§/, /New Mills/g, '');
+    encodePlace(/§/, /Cessnock/g, 55.85208, -4.2964888, zoomCity);
+    encodePlace(/§/, /Barskymming/g, 55.4961463, -4.4246124, zoomCity);
+    encodePlace(/§/, /New Mills/g, 53.3680469, -2.0106424, zoomCity);
     encodePlace(/§/, /Polkemmet/g, '');
     encodePlace(/§/, /Balfour/g, '');
     encodePlace(/§/, /Fife/g, '');
@@ -357,6 +361,17 @@ function convertBook(fileText) {
     return allBooks;
 }
 
+function renderPlaces() {
+    var places = '';
+    for (var e in encodingArray) {
+        var encodingEntry = encodingArray[e];
+        if (encodingEntry.classes.includes('place')) {
+            places += '<li>' + ' <span class="' + encodingEntry.classes + '" onclick="showEntry(' + e + ')">' + encodingEntry.matches.toString() + '</span></li>';
+        }
+    }
+    return places;
+}
+
 function encodePlace(paragraphSelector, search, latitude = 56.9423901, longitude = -5.0333438, zoom = 15, newEntry = true) {
     var latlongzoom = { lat: latitude, lng: longitude, zoom: zoom };
     encode(paragraphSelector, search, 'place', newEntry, latlongzoom);
@@ -393,7 +408,10 @@ function encode(paragraphSelector, search, classes, newEntry = true, extraInfo =
 
 function showEntry(index) {
     var encodingEntry = encodingArray[index];
-    map.setCenter(encodingEntry.extraInfo);
+    if (encodingEntry.classes === 'place') {
+        map.setCenter(encodingEntry.extraInfo);
+        map.setZoom(encodingEntry.extraInfo.zoom);
+    }
 }
 
 function initMap() {
@@ -403,5 +421,4 @@ function initMap() {
 function showPopup(idPopup) {
     var popup = document.getElementById(idPopup);
     popup.classList.toggle("show");
-    initMap();
 }

@@ -122,3 +122,7 @@ div.sticky {
     height: 200px;
     background-color: pink;
 }
+
+#rawBook {
+    visibility: hidden;
+}
