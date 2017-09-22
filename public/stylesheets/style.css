@@ -111,8 +111,7 @@ p {
 
 div.sticky {
     position: fixed;
-    left: 20;
-    top: 10;
+    margin-left: 500px;
     width: 400px;
     height: 200px;
     background-color: grey;
