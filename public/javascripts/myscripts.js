@@ -2,6 +2,7 @@ function onLoad() {
     document.getElementById('book').innerHTML = convertBook(document.getElementById('book').innerHTML);
 }
 
+var map;
 var paragraphs = "";
 var encodingArray = [];
 
@@ -389,8 +390,6 @@ function encode(paragraphSelector, search, classes, newEntry = true, extraInfo =
         }
     }
 }
-
-var map;
 
 function showEntry(index) {
     var encodingEntry = encodingArray[index];
