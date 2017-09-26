@@ -1,39 +1,38 @@
-function onLoad() {
-    document.getElementById('cookBook').innerHTML = convertBook(document.getElementById('rawBook').innerHTML);
+function onLoad(bookText) {
+    document.getElementById('books').innerHTML = convertBook(bookText);
     document.getElementById('places').innerHTML = renderPlaces();
-    document.getElementById('rawBook').innerHTML = "";
 }
 
 var map;
 var paragraphs = "";
 var encodingArray = [];
 
-function convertBook(fileText) {
+function convertBook(bookText) {
 
     // replace crlf with lf
-    fileText = fileText.replace(/\r\n/g, "\n");
+    bookText = bookText.replace(/\r\n/g, "\n");
 
     // remove horizontal lines that serve no purpose
-    fileText = fileText.replace(/history.\n +_+/, "history.\n");
-    fileText = fileText.replace(/life.\n +_+/, "life.\n");
-    fileText = fileText.replace(/hear.\n +_+/, "hear.\n");
+    bookText = bookText.replace(/history.\n +_+/, "history.\n");
+    bookText = bookText.replace(/life.\n +_+/, "life.\n");
+    bookText = bookText.replace(/hear.\n +_+/, "hear.\n");
 
     // remove whitespace in the front of each line
-    fileText = fileText.replace(/^ +/gm, "");
+    bookText = bookText.replace(/^ +/gm, "");
 
     // replace crlf with lf
-    fileText = fileText.replace(/\r\n/g, "\n");
+    bookText = bookText.replace(/\r\n/g, "\n");
 
     // remove horizontal lines that serve no purpose
-    fileText = fileText.replace(/history.\n +_+/, "history.\n");
-    fileText = fileText.replace(/life.\n +_+/, "life.\n");
-    fileText = fileText.replace(/hear.\n +_+/, "hear.\n");
+    bookText = bookText.replace(/history.\n +_+/, "history.\n");
+    bookText = bookText.replace(/life.\n +_+/, "life.\n");
+    bookText = bookText.replace(/hear.\n +_+/, "hear.\n");
 
     // remove whitespace in the front of each line
-    fileText = fileText.replace(/^ +/gm, "");
+    bookText = bookText.replace(/^ +/gm, "");
 
     // break the document into 4 books and 4 sets of notes
-    var sections = fileText.split("__________________________________________________________________\n");
+    var sections = bookText.split("__________________________________________________________________\n");
     var books = [sections[7], sections[9], sections[11], sections[13]];
     var notes = [sections[8], sections[10], sections[12], sections[14]];
 

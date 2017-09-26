@@ -5,15 +5,13 @@ block content
   div.sticky
     div#map
   
-  div#rawBook !{rawBook}
-
   h1 Places
 
   div#places
 
-  div#cookBook
+  div#books
 
   script.
-    window.onload = onLoad
+    window.onload = onLoad("#{JSON.stringify(rawBook)}");
    
   script(async, defer, src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrmOv7c979sXJumeKkJ2U8VnYgT-iZWGk&callback=initMap")
