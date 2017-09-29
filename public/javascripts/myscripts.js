@@ -113,19 +113,10 @@ function convertBook(bookText) {
     encode(/§/, /Mary of Lorraine/g, classes);
     encode(/§/, /Jane Seymour/g, classes);
     encode(/§/, /Queen Katherine/g, classes);
-    var mqs = encode(/§/, /Mary Queen of Scots|Mary Stuart/g, classes);
+    var mqs = encode(/§/, /Mary Queen of Scots|Mary Stuart|Queen Dowager/g, classes);
     var mog = encode(/§/, /Mary of Guise/g, classes);
     encode(/§/, /Edward the Sixth/g, classes);
-    encode(/§/, /King of France/g, classes);
-
-    encode(/§/, /Queen Mary|Queen\b/g, classes, mqs);
-    encode(/§1·(44|54)\D/, /the mother/g, classes, mog);
-    encode(/§1·54\D/, /the daughter/g, classes, mqs);
-    encode(/§/, /Mary/g, classes, mog);
-    encode(/§1·(3|4|7)\D/, /King/g, classes, kj4);
-    encode(/§1·31\D/, /our King\b/gi, classes, kj5);
-    encode(/§1·(15|16|18|22|24|28|29|30|31|32|33|34|35|36|37|38|40|41|42|43|44)\D/, /Prince|King James|King/g, classes, kj5);
-    encode(/§/, /Unknown King|King/g, classes);
+    var kof = encode(/§/, /King of France/g, classes);
 
     classes = 'person martyr';
     encode(/§1·1·1:/, /not given/g, classes);
@@ -227,7 +218,7 @@ function convertBook(bookText) {
     encode(/§/, /Earl Bothwell|Earl of Bothwell|Lord Bothwell|Bothwell/g, classes);
     var eoa = encode(/§/, /Earl of Arran/g, classes);
     encode(/§1·(56|89)/, /Carinal David Beaton's eldest son|eldest son/g, classes);
-    encode(/§/, /Earl of Lennox/g, classes);
+    var eol = encode(/§/, /Earl of Lennox/g, classes);
 
     classes = 'person other';
     encode(/§/, /Richard Carmichael/g, classes);
@@ -262,8 +253,17 @@ function convertBook(bookText) {
     encode(/§/, /Master James Foulis/g, classes);
     var aoc = encode(/§/, /Abbot of Crossraguel/g, classes);
     encode(/§/, /Elizabeth Home/g, classes);
+    encode(/§/, /La Broche/g, classes);
 
     // short hand
+    encode(/§/, /Queen Mary|Queen\b/g, '', mqs);
+    encode(/§1·(44|54)\D/, /the mother/g, '', mog);
+    encode(/§1·54\D/, /the daughter/g, '', mqs);
+    encode(/§/, /Mary/g, classes, mog);
+    encode(/§1·(3|4|7)\D/, /King/g, classes, kj4);
+    encode(/§1·31\D/, /our King\b/gi, classes, kj5);
+    encode(/§1·(15|16|18|22|24|28|29|30|31|32|33|34|35|36|37|38|40|41|42|43|44)\D/, /Prince|King James|King/g, classes, kj5);
+    encode(/§1·58\D/, /King/g, '', kof);
     encode(/§/, /Friar Alexander|Alexander/g, '', set);
     encode(/§/, /Campbell/g, '', fac);
     encode(/§/, /Archbishop/g, '', beaj);
@@ -274,9 +274,13 @@ function convertBook(bookText) {
     encode(/§4·36\D/, /Abbot/g, '', aok);
     encode(/§4·51\D/, /Abbot/g, '', aoc);
     encode(/§1·(44|55|99|101)\D/, /Regent\b/g, '', eoa);
-    encode(/§/, /Governor of Scotland|Earl Governor|Governor/g, classes, eoa);
-    encode(/§1·43·1:/, /said Earl/g, classes, eoa);
-
+    encode(/§/, /Governor of Scotland/g, '', eoa);
+    encode(/§1·43\D/, /said Earl/g, '', eoa);
+    encode(/§1·58\D/, /Earl/g, '', eol);
+    encode(/§1.58\D/, /Governor. The/, 'stet');
+    encode(/§/, /Governor/g, '', eoa);
+    encode(/§/, /Unknown King|King/g, classes);
+    
     var zoomCity = 12;
     var zoomNeighborhood = 17;
     encodePlace(/§/, /Market Cross of Edinburgh/g, 55.949652, -3.190105, zoomNeighborhood);
@@ -382,7 +386,10 @@ function convertBook(bookText) {
 
     allBooks = allBooks.replace(/\{(\d*).(\d*)\}/g, function match(match, index, subIndex) {
         var encodingEntry = encodingArray[index];
-        if (subIndex == 0 || encodingEntry.classes == 'date') {
+        if( encodingEntry.classes == 'stet') {
+            return encodingEntry.matches[0];
+        }
+        else if (subIndex == 0 || encodingEntry.classes == 'date') {
             return '<i>' + ' <span class="' + encodingEntry.classes + '" onclick="showEntry(' + index + ')">' + encodingEntry.matches[subIndex] + '</span></i>';
         }
         else {
