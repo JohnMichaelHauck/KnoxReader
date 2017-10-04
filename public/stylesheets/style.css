@@ -45,6 +45,17 @@ p {
     color: red;
 }
 
+.threatened {
+    color: red;
+}
+
+.banished {
+    color: red;
+}
+.imprisoned {
+    color: red;
+}
+
 /* Popup container */
 .popup {
     position: relative;
