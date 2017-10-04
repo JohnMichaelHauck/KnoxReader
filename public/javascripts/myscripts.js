@@ -100,7 +100,7 @@ function convertBook(bookText) {
     }
     paragraphs = allBooks.split("¶");
 
-    // resume at 1:64
+    // resume at 1:78
 
     var classes = 'person royalty';
     encode(/§/, /King James the First/g, classes);
@@ -214,6 +214,7 @@ function convertBook(bookText) {
     encode(/§/, /James Watson/g, classes);
     encode(/§/, /William Spadin/g, classes);
     encode(/§/, /John Watson/g, classes);
+    encode(/§/, /John Knox|Knox/g, classes);
     
     classes = 'person catholic';
     var robertBlackader = encode(/§/, /Robert Blackader|Archbishop Blackader|Blackader/g, classes);
@@ -318,6 +319,7 @@ function convertBook(bookText) {
     encode(/§/, /Laird of Leifnorris/g, classes);
     encode(/§/, /George Reid/g, classes);
     encode(/§/, /Laird of Templeland/g, classes);
+    var lairdLethington = encode(/§/, /Laird of Lethington/g, classes);
 
     var zoomCity = 12;
     var zoomNeighborhood = 17;
@@ -406,6 +408,13 @@ function convertBook(bookText) {
     encodePlace(/§/, /Daldilling/g);
     encodePlace(/§/, /Kinyeancleuch/g);
     encodePlace(/§/, /Invergowrie/g);
+    encodePlace(/§/, /Inveresk/g);
+    encodePlace(/§/, /Brunstone/g);
+    encodePlace(/§/, /Longniddry/g);
+    encodePlace(/§/, /Ormiston/g);
+    encodePlace(/§/, /Musselburgh/g);
+    encodePlace(/§/, /Tranent/g);
+    encodePlace(/§/, /Lethington/g);
     
     // short hand
     encode2(/§1·3\D/, /Archbishop of Glasgow/g, robertBlackader);
@@ -451,15 +460,17 @@ function convertBook(bookText) {
     encode2(/§1·64\D/, /Harry/g, LordDarnley);
     encode2(/§/, /Seton/g, lordSeton);
     encode2(/§3·12·4:/, /Alexander/g, alexanderWhitelaw);
-    encode2(/§/, /Master George/g, georgeWishart);
-    encode2(/§/, /Wishart/g, georgeWishart);
-    encode2(/§1·67\D/, /He/, georgeWishart);
     encode2(/§1·(38|58)\D/, /Glencairn/g, earlWilliamGlencairn);
     encode2(/§1·(68)\D/, /Earl of Glencairn/g, earlWilliamGlencairn);
     encode2(/§/, /Earl of Glencairn/g, earlAlexanderGlencairn);
     encode2(/§/, /Glencairn/g, earlAlexanderGlencairn);
     encode2(/§1·(58|113)\D/, /Maxwell/g, lordMaxwell);
     encode2(/§/, /Maxwell/g, masterMaxwell);
+    encode2(/§/, /Master George/g, georgeWishart);
+    encode2(/§/, /Wishart/g, georgeWishart);
+    encode2(/§1·67\D/, /He/, georgeWishart);
+    encode2(/§1·74:/, /he/, georgeWishart);
+    encode2(/§1·75·1:/, /Laird/, lairdLethington);
     
     encode(/§/, /Unknown King|King/g, 'person royalty');
     
