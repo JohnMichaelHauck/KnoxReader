@@ -1,106 +1,126 @@
+// http://www.ccel.org/ccel/knox/history_reformation.html
+// https://archive.org/details/thehistoryofther00knoxuoft
+
 function onLoad(bookText) {
     document.getElementById('books').innerHTML = convertBook(bookText);
     document.getElementById('places').innerHTML = renderPlaces();
+    document.getElementById('people').innerHTML = renderPeople();
 }
 
 var map;
-var paragraphs = "";
+var paragraphs = [];
 var encodingArray = [];
 
 function convertBook(bookText) {
 
-    // replace crlf with lf
-    bookText = bookText.replace(/\r\n/g, "\n");
+    bookText = bookText.replace(/\r\n/gm, " ");
+    bookText = bookText.replace(/ +/g, " ");
+    bookText = bookText.replace(/&lt;/g, "<");
+    bookText = bookText.replace(/&gt;/g, ">");
+    bookText = bookText.replace(/&quot;/g, '"');
+    bookText = bookText.substring(1, bookText.length - 1);
 
-    // remove horizontal lines that serve no purpose
-    bookText = bookText.replace(/history.\n +_+/, "history.\n");
-    bookText = bookText.replace(/life.\n +_+/, "life.\n");
-    bookText = bookText.replace(/hear.\n +_+/, "hear.\n");
+    // remove <i>
+    bookText = bookText.replace(/<i.*?>/g, function (match) {
+        return "";
+    });
+    bookText = bookText.replace(/<\/i>/g, function (match) {
+        return "";
+    });
 
-    // remove whitespace in the front of each line
-    bookText = bookText.replace(/^ +/gm, "");
+    // remove <a>
+    bookText = bookText.replace(/<a.*?>/g, function (match) {
+        return "";
+    });
+    bookText = bookText.replace(/<\/a>/g, function (match) {
+        return "";
+    });
 
-    // replace crlf with lf
-    bookText = bookText.replace(/\r\n/g, "\n");
+    // remove <cite>
+    bookText = bookText.replace(/<cite.*?>/g, function (match) {
+        return "";
+    });
+    bookText = bookText.replace(/<\/cite>/g, function (match) {
+        return "";
+    });
 
-    // remove horizontal lines that serve no purpose
-    bookText = bookText.replace(/history.\n +_+/, "history.\n");
-    bookText = bookText.replace(/life.\n +_+/, "life.\n");
-    bookText = bookText.replace(/hear.\n +_+/, "hear.\n");
+    // remove <blockquote>
+    bookText = bookText.replace(/<blockquote.*?>/g, function (match) {
+        return "";
+    });
+    bookText = bookText.replace(/<\/blockquote>/g, function (match) {
+        return "";
+    });
 
-    // remove whitespace in the front of each line
-    bookText = bookText.replace(/^ +/gm, "");
+    // remove <em>
+    bookText = bookText.replace(/\<em.*?\>/g, function (match) {
+        return "";
+    });
+    bookText = bookText.replace(/<\/em>/g, function (match) {
+        return "";
+    });
 
-    // break the document into 4 books and 4 sets of notes
-    var sections = bookText.split("__________________________________________________________________\n");
-    var books = [sections[7], sections[9], sections[11], sections[13]];
-    var notes = [sections[8], sections[10], sections[12], sections[14]];
+    bookText = bookText.replace(/<sup.*?<\/sup>/g, function (match) {
+        return "";
+    });
 
-    var i;
-    var bookText = "";
+    bookText = bookText.replace(/<sup.*?<\/sup>/g, function (match) {
+        return "";
+    });
 
-    // add headings
-    for (i = 0; i < books.length; i++) {
-        books[i] = books[i].replace(/^\n(.+)\n\n(.+)\n/, "<h1>$1 $2</h1>\n");
-        books[i] = books[i].replace(/\n\n(.+)\n\n/g, "\n<h2>$1</h2>\n");
-    }
-
-    // add paragraphs
-    for (i = 0; i < books.length; i++) {
-        books[i] = books[i].replace(/\n<h2>/g, "</p>\n<h2>");
-        books[i] = books[i].replace(/<\/h2>\n/g, "</h2>\n<p>");
-        books[i] = books[i].replace(/\n\n/g, "</p>\n<p>");
-        books[i] = books[i].replace(/<\/h1><\/p>/g, "</h1>");
-        books[i] = books[i].replace(/\n$/, "</p>\n");
-    }
-
-    // concat lines
-    for (i = 0; i < books.length; i++) {
-        books[i] = books[i].replace(/([^>])\n/g, "$1 ");
-    }
-
-    // place the notes inline into the book
-    for (i = 0; i < books.length; i++) {
-        notes[i].replace(/\n\[([0-9]+)\] (.+(\n.+)*)/g, function (match, number, note) {
-            note = note.replace(/\n/g, "");
-            books[i] = books[i].replace("[" + number + "]", '<span class="popup" onclick="showPopup(\'note' + number + '\')"><sup>[' + number + ']</sup><span class="popuptext" id="note' + number + '">' + note + '</span></span>');
+    bookText = bookText.replace(/<span class="(.*?)".*?>(.*?)<\/span>/g, function (match, a, b) {
+        if (a == "pb") {
+            return "□" + b;
+        }
+        else {
             return "";
-        });
-    }
+        }
+    });
 
-    // add chapter numbers
-    for (i = 0; i < books.length; i++) {
-        books[i] = books[i].replace(/(<h1[^>]*>)(.*)(<\/h1>)/, function (match, a, b, c) {
-            return "¶" + a + "§" + (i + 1) + ": " + b + c;
-        });
+    bookText = bookText.replace(/<h2[^]*?>([^]*?)<\/h2>/g, function (match, a) {
+        return "»" + a;
+    });
 
-        var j = 1;
-        books[i] = books[i].replace(/(<h2[^>]*>)(.*)(<\/h2>)/g, function (match, a, b, c) {
-            return "¶" + a + "§" + (i + 1) + "·" + j++ + ": " + b + c;
-        });
-    }
+    bookText = bookText.replace(/<h3.*?>(.*?)<\/h3>/g, function (match, a) {
+        return a;
+    });
 
-    var allBooks = books[0] + books[1] + books[2] + books[3];
+    bookText = bookText.replace(/<div.*?>(.*?)<\/div>/g, function (match, a) {
+        return "§" + a;
+    });
 
-    // split the whole book into paragraphs
-    paragraphs = allBooks.split("¶");
-
-    for (i = 0; i < paragraphs.length; i++) {
-        var section = paragraphs[i].match(/§[^:]*/);
-        var k = 1;
-        paragraphs[i] = paragraphs[i].replace(/(<p>)(.*)(<\/p>)/g, function (match, a, b, c) {
-            return "¶" + a + section + "·" + k++ + ": " + b + c;
-        });
-    }
+    bookText = bookText.replace(/<p.*?>(.*?)<\/p>/g, function (match, a) {
+        return "¶" + a;
+    });
 
     // split the whole book into paragraphs
-    allBooks = "";
-    for (i = 0; i < paragraphs.length; i++) {
-        allBooks += paragraphs[i] + "¶";
+    var page = 1;
+    var b;
+    var c;
+    var v;
+    var books = bookText.split("»");
+    for (b = 1; b < books.length; b++) {
+        var chapters = books[b].split("§");
+        paragraphs.push("<h1>§" + b + ":(" + page + ") " + chapters[0] + "</h1>");
+        for (c = 1; c < chapters.length; c++) {
+            var verses = chapters[c].split("¶");
+            paragraphs.push("<h2>§" + b + "·" + c + ":(" + page + ") " + verses[0] + "</h2>");
+            for (v = 1; v < verses.length; v++) {
+                var newPage = page;
+                verses[v] = verses[v].replace(/□([0-9]*)/, function (match, a) {
+                    newPage = Number(a);
+                    return "";
+                });
+                if (verses[v].length > 2) {
+                    paragraphs.push("<p>§" + b + "·" + c + "·" + v + ":(" + page + ") " + verses[v] + "</p>");
+                }
+                page = newPage;
+            }
+        }
     }
-    paragraphs = allBooks.split("¶");
 
-    // resume at 1:78
+    //  1·80: confsusion about archbishop!
+
 
     var classes = 'person royalty';
     encode(/§/, /King James the First/g, classes);
@@ -143,6 +163,7 @@ function convertBook(bookText) {
     encode(/§/, /James Ronaldson/g, classes);
     encode(/§/, /John Roger/g, classes);
     var georgeWishart = encode(/§/, /Master George Wishart/g, classes);
+    encode(/§1·29\D/, /Sir James Hamilton|Sir James/g, classes);
     
     classes = 'person threatened';
     encode(/§/, /Master Michael Durham/g, classes);
@@ -163,7 +184,7 @@ function convertBook(bookText) {
     var earlOfAngus = encode(/§/, /Earl of Angus/g, classes);
     encode2(/§1·58·2:/, /Angus/g, earlOfAngus);
     var georgeDouglass = encode(/§/, /Sir George Douglas|George Douglas/g, classes);
-    
+
     classes = 'person protestant';
     encode(/§/, /George Campbell/g, classes);
     encode(/§/, /Adam Reid/g, classes);
@@ -215,12 +236,26 @@ function convertBook(bookText) {
     encode(/§/, /William Spadin/g, classes);
     encode(/§/, /John Watson/g, classes);
     encode(/§/, /John Knox|Knox/g, classes);
+    var jamesHamilton = encode(/§/, /Lord James Hamilton|Lord Hamilton|Earl of Arran/g, classes);
+    encode2(/§/, /Governor of Scotland/g, jamesHamilton);
+    encode2(/§1·43\D/, /said Earl/g, jamesHamilton);
+    encode2(/§/, /Lord Governor|Governor/g, jamesHamilton);
+    encode2(/§1·(44|55|99|102)\D/, /Regent\b/g, jamesHamilton);
+    encode2(/§(3·1|4·34)\D/, /Arran/g, jamesHamilton);
     
     classes = 'person catholic';
-    var robertBlackader = encode(/§/, /Robert Blackader|Archbishop Blackader|Blackader/g, classes);
-    var jamesBeaton = encode(/§/, /Archbishop James Beaton|Mr. James Beaton|James Beaton|Archbishop of Glasgow|Archbishop of St. Andrews|Abbot of Dunfermline|Chancellor of Scotland/g, classes);
+    var robertBlackader = encode(/§/, /Archbishop Robert Blackader|Robert Blackader|Archbishop Blackader|Blackader/g, classes);
+    var gawinDunbar = encode(/§/, /Gawin Dunbar|Dunbar, Archbishop of Glasgow|Archbishop Dunbar/g, classes);
+    var jamesBeaton = encode(/§/, /Archbishop James Beaton|Mr. James Beaton|James Beaton|Archbishop of St. Andrews|Abbot of Dunfermline/g, classes);
     var davidBeaton = encode(/§/, /Cardinal David Beaton|David Beaton|Cardinal Beaton|crafty fox/g, classes);
-    encode(/§1·25\D/, /Gawin Dunbar|Chancellor, Archbishop of Glasgow/g, classes);
+    encode2(/§1·3\D/, /Archbishop of Glasgow/g, robertBlackader);
+    encode2(/§1·4·2:/, /Archbishop/g, robertBlackader);
+    encode2(/§/, /Archbishop/g, jamesBeaton);
+    encode2(/§/, /Archbishop of Glasgow/g, jamesBeaton);
+    encode2(/§/, /Chancellor of Scotland/g, jamesBeaton);
+    encode2(/§/, /Cardinal of Scotland|Cardinal/g, davidBeaton);
+    encode2(/§1·25/, /Chancellor/g, jamesBeaton);
+    encode(/§/, /Dean John Annan/g, classes);
     var alexanderCampbell = encode(/§/, /Friar Alexander Campbell/g, classes);
     encode(/§/, /Earl of Cassillis|Cassillis/g, classes);
     encode(/§/, /Bishop of Brechin/g, classes);
@@ -237,7 +272,9 @@ function convertBook(bookText) {
     encode(/§1·38\D/, /Ross/g, classes);
     encode(/§1·38\D/, /Laird of Craigie/g, classes);
     var earlHuntly = encode(/§/, /Earl Huntly|Earl of Huntly/g, classes);
-    encode(/§/, /Earl Argyll|Earl of Argyll|Argyll/g, classes);
+    var earlArgyll4 = encode(/§1·(43|54|104|105|123|125|132)\D/, /Fourth Earl of Argyll|old Earl of Argyll|Earl Argyll|Earl of Argyll/g, classes);
+    var earlArgyll5 = encode(/§/, /Fifth Earl of Argyll|Earl Argyll|Earl of Argyll/g, classes);
+    encode2(/§3·3\D/, /Argyll/, earlArgyll5);
     encode(/§/, /Earl Moray|Moray/g, classes);
     encode(/§/, /Friar Scott/g, classes);
     encode(/§/, /Bishop of Dunkeld|Dunkeld/g, classes);
@@ -247,9 +284,8 @@ function convertBook(bookText) {
     var abbotKilwinning = encode(/§/, /Abbot of Kilwinning/g, classes);
     var abbotLindores = encode(/§/, /Abbot of Lindores/g, classes);
     var johnHamilton = encode(/§/, /John Hamilton|Abbot of Paisley/g, classes);
-    encode(/§/, /Earl Bothwell|Earl of Bothwell|Lord Bothwell|Bothwell/g, classes);
-    var earlOfArran = encode(/§/, /Earl of Arran/g, classes);
-    encode(/§1·(56|89)/, /Carinal David Beaton's eldest son|eldest son/g, classes);
+    var earlBothwell = encode(/§/, /Earl Bothwell|Earl of Bothwell|Lord Bothwell|Bothwell/g, classes);
+    encode(/§1·(56|87)/, /Carinal David Beaton's eldest son|eldest son/g, classes);
     var earlLennox = encode(/§/, /Earl of Lennox/g, classes);
     var friarArbuckle = encode(/§/, /Friar Arbuckle|Arbuckle, Greyfriar|Arbuckle/g, classes);
     encode(/§/, /Monsieur de Lorge Montgomery/g, classes);
@@ -259,10 +295,9 @@ function convertBook(bookText) {
     encode(/§1·33\D/, /Lord Home|Home/g, classes);
     encode(/§1·68\D/, /Hugh Campbell|Hugh/g, classes);
     encode(/§/, /Sir John Wighton/g, classes);
-    
+
     classes = 'person other';
     encode(/§/, /Richard Carmichael/g, classes);
-    var jamesHamilton = encode(/§1·29\D/, /Sir James Hamilton|Sir James|Lord Hamilton/g, classes);
     encode(/§1·38\D/, /Lord Hamilton/g, classes, jamesHamilton);
     encode(/§/, /Thomas Scott/g, classes);
     encode(/§/, /Master Thomas Marjoribanks/g, classes);
@@ -329,7 +364,7 @@ function convertBook(bookText) {
     encodePlace2(/§1·8·1:/, /old College/g, universityStAndrews);
     encodePlace(/§/, /Sea-Tower of St. Andrews/g, 0, 0, zoomCity);
     encodePlace(/§/, /Castle of St. Andrews/g, 0, 0, zoomCity);
-    var edinburghCastle = encodePlace(/§/, /Castle of Edinburgh/g, 0, 0, zoomCity);
+    var edinburghCastle = encodePlace(/§/, /Castle of Edinburgh|Edinburgh Castle/g, 0, 0, zoomCity);
     encodePlace2(/§1·65\D/, /Edinburgh/g, edinburghCastle);
     var dunbarCastle = encodePlace(/§/, /Castle of Dunbar/g, 0, 0, zoomCity);
     encodePlace2(/§1·65\D/, /Dunbar/g, dunbarCastle);
@@ -415,10 +450,10 @@ function convertBook(bookText) {
     encodePlace(/§/, /Musselburgh/g);
     encodePlace(/§/, /Tranent/g);
     encodePlace(/§/, /Lethington/g);
+    encodePlace(/§/, /House of Hailes/g);
+    encodePlace(/§/, /Argyll/g);
     
     // short hand
-    encode2(/§1·3\D/, /Archbishop of Glasgow/g, robertBlackader);
-    encode2(/§1·4·2:/, /Archbishop/g, robertBlackader);
     encode2(/§/, /Queen Mary|Queen\b/g, maryQueenScots);
     encode2(/§1·(44|54)\D/, /the mother/g, maryGuise);
     encode2(/§1·54\D/, /the daughter/g, maryQueenScots);
@@ -430,18 +465,11 @@ function convertBook(bookText) {
     encode2(/§/, /Friar Alexander/g, alexanderSeton);
     encode2(/§1·(15|17)\D/, /Alexander/g, alexanderSeton);
     encode2(/§/, /Campbell/g, alexanderCampbell); // todo
-    encode2(/§/, /Archbishop/g, jamesBeaton);
     encode2(/§/, /Beaton/g, jamesBeaton);
-    encode2(/§/, /Cardinal of Scotland|Cardinal/g, davidBeaton);
     encode2(/§1·(53|54)\D/, /Abbot/g, johnHamilton);
     encode2(/§3·31\D/, /Lindores/g, abbotLindores);
     encode2(/§4·36\D/, /Abbot/g, abbotKilwinning);
     encode2(/§4·51\D/, /Abbot/g, abbotCrossraguel);
-    encode2(/§/, /Governor of Scotland/g, earlOfArran);
-    encode2(/§1·43\D/, /said Earl/g, earlOfArran);
-    encode2(/§/, /Lord Governor|Governor/g, earlOfArran);
-    encode2(/§1·(44|55|99|101)\D/, /Regent\b/g, earlOfArran);
-    encode2(/§(3·1|4·34)\D/, /Arran/g, earlOfArran);
     encode2(/§1·58\D/, /Earl\b/g, earlLennox);
     encode(/§1.58\D/, /Governor. The/, 'stet');
     encode2(/§1·(59|60)/, /John/g, johnCharteris);
@@ -451,29 +479,27 @@ function convertBook(bookText) {
     encode2(/§1·(10|11|12)\D/, /Friar\b/g, williamArth);
     encode(/§1·13\D/, /Black Friar/g, 'stet');
     encode2(/§1·13\D/, /Friar/g, alexanderSeton);
-    encode2(/§1·98·9/, /Friar/g, friarArbuckle);
-    encode2(/§1·99\D/, /Friar/g, friarArbuckle);
+    encode2(/§1·97·9/, /Friar/g, friarArbuckle);
     encode2(/§1·61\D/, /Earl/g, earlofRothes);
     encode2(/§1·61\D/, /Lord\b/g, lordGray);
     encode2(/§/, /Master Henry/g, henryBalnaves);
     encode2(/§/, /Sir George/g, georgeDouglass);
     encode2(/§1·64\D/, /Harry/g, LordDarnley);
     encode2(/§/, /Seton/g, lordSeton);
-    encode2(/§3·12·4:/, /Alexander/g, alexanderWhitelaw);
+    encode2(/§3·12·4:/, /Alexander/g, alexanderWhitelaw);//---
     encode2(/§1·(38|58)\D/, /Glencairn/g, earlWilliamGlencairn);
     encode2(/§1·(68)\D/, /Earl of Glencairn/g, earlWilliamGlencairn);
     encode2(/§/, /Earl of Glencairn/g, earlAlexanderGlencairn);
     encode2(/§/, /Glencairn/g, earlAlexanderGlencairn);
-    encode2(/§1·(58|113)\D/, /Maxwell/g, lordMaxwell);
+    encode2(/§1·(58|114)\D/, /Maxwell/g, lordMaxwell);
     encode2(/§/, /Maxwell/g, masterMaxwell);
     encode2(/§/, /Master George/g, georgeWishart);
     encode2(/§/, /Wishart/g, georgeWishart);
     encode2(/§1·67\D/, /He/, georgeWishart);
     encode2(/§1·74:/, /he/, georgeWishart);
     encode2(/§1·75·1:/, /Laird/, lairdLethington);
-    
-    encode(/§/, /Unknown King|King/g, 'person royalty');
-    
+    encode2(/§1·78·1:/, /Earl/, earlBothwell);
+
     classes = 'date';
     encode(/§/, /1[45]\d\d/g, classes);
 
@@ -518,14 +544,24 @@ function convertBook(bookText) {
     // encode(/§/, /§1·24·1:/, classes);
     // encode(/§/, /§1·25·1:/, classes);
 
-    allBooks = "";
+
+    // place the notes inline into the book
+    // for (i = 0; i < books.length; i++) {
+    //     notes[i].replace(/\n\[([0-9]+)\] (.+(\n.+)*)/g, function (match, number, note) {
+    //         note = note.replace(/\n/g, "");
+    //         books[i] = books[i].replace("[" + number + "]", '<span class="popup" onclick="showPopup(\'note' + number + '\')"><sup>[' + number + ']</sup><span class="popuptext" id="note' + number + '">' + note + '</span></span>');
+    //         return "";
+    //     });
+    // }
+
+    bookText = "";
     for (i = 0; i < paragraphs.length; i++) {
-        allBooks += paragraphs[i];
+        bookText += paragraphs[i];
     }
 
-    allBooks = allBooks.replace(/\{(\d*).(\d*)\}/g, function match(match, index, subIndex) {
+    bookText = bookText.replace(/\{(\d*).(\d*)\}/g, function match(match, index, subIndex) {
         var encodingEntry = encodingArray[index];
-        if( encodingEntry.classes == 'stet') {
+        if (encodingEntry.classes == 'stet') {
             return encodingEntry.matches[0];
         }
         else if (subIndex == 0 || encodingEntry.classes == 'date') {
@@ -536,19 +572,7 @@ function convertBook(bookText) {
         }
     });
 
-    var people = '<h1>People</h1>';
-    var classes = ['Royalty', 'Martyr', 'Protestant', 'Catholic', 'Other'];
-    for (var c in classes) {
-        people += '<h2>' + classes[c] + '</h2>';
-        for (var e in encodingArray) {
-            var encodingEntry = encodingArray[e];
-            if (encodingEntry.classes.includes(' ' + classes[c].toLowerCase())) {
-                people += '<li>' + encodingEntry.matches.toString().replace(/,/g, ', ') + '</li>';
-            }
-        }
-    }
-
-    return allBooks;
+    return bookText;
 }
 
 function renderPlaces() {
@@ -560,6 +584,22 @@ function renderPlaces() {
         }
     }
     return places;
+}
+
+function renderPeople() {
+    var people = '';
+    var classes = ['Royalty', 'Martyr', 'Threatened', 'Banished', 'Imprisoned', 'Protestant', 'Catholic', 'Other'];
+    for (var c in classes) {
+        people += '<h2>' + classes[c] + '</h2>';
+        for (var e in encodingArray) {
+            var encodingEntry = encodingArray[e];
+            if (encodingEntry.classes.includes(' ' + classes[c].toLowerCase())) {
+                encodingEntry.pages.sort(function(a, b){return a - b});
+                people += '<li>' + encodingEntry.matches.toString().replace(/,/g, ', ') + ' ' + encodingEntry.pages.toString().replace(/,/g, ', ') + '</li>';
+            }
+        }
+    }
+    return people;
 }
 
 function encodePlace2(paragraphSelector, search, index) {
@@ -584,6 +624,7 @@ function encode(paragraphSelector, search, classes, index = -1, extraInfo = '') 
         encodingEntry.matches = search.toString().replace(/\/gi|\/g|\//g, '').split('|');
         encodingEntry.classes = classes;
         encodingEntry.extraInfo = extraInfo;
+        encodingEntry.pages = [];
         encodingArray.push(encodingEntry);
         index = encodingArray.length - 1;
     }
@@ -594,6 +635,10 @@ function encode(paragraphSelector, search, classes, index = -1, extraInfo = '') 
     for (i = 0; i < paragraphs.length; i++) {
         if (paragraphs[i].search(paragraphSelector) >= 0) {
             paragraphs[i] = paragraphs[i].replace(search, function (match) {
+                var page = paragraphs[i].replace(/[^(]*\((\d*).*/, "$1");
+                if (encodingEntry.pages.indexOf(page) == -1 ) {
+                    encodingEntry.pages.push(page);
+                }
                 subIndex = encodingEntry.matches.indexOf(match);
                 if (subIndex == -1) {
                     encodingEntry.matches.push(match);
